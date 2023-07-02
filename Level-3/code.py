@@ -21,10 +21,10 @@ class TaxPayer:
     def get_prof_picture(self, path=None):
         # setting a profile picture is optional
         if not path:
-            pass
+            return None
         
         # defends against path traversal attacks
-        if path.startswith('/') or path.startswith('..'):
+        if path.startswith('/') or '..' in path:
             return None
         
         # builds path
@@ -44,6 +44,9 @@ class TaxPayer:
         if not path:
             raise Exception("Error: Tax form is required for all users")
        
+        if path.find('..') >= 0:
+            return None
+
         with open(path, 'rb') as form:
             tax_data = bytearray(form.read())
 

@@ -78,7 +78,7 @@ class DB_CRUD_ops(object):
             cur = db_con.cursor() 
             
             res = "[METHOD EXECUTED] get_stock_info\n"
-            query = "SELECT * FROM stocks WHERE symbol = '{0}'".format(stock_symbol)
+            query = "SELECT * FROM stocks WHERE symbol = (?)"
             res += "[QUERY] " + query + "\n"
             
             # a block list or restricted characters that should not be presented in user-supplied input
@@ -95,7 +95,7 @@ class DB_CRUD_ops(object):
                 # res += "[SANITIZED_QUERY]" + sanitized_query + "\n"
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
             else:
-                cur.execute(query)
+                cur.execute(query, (stock_symbol,))
                 
                 query_outcome = cur.fetchall()
                 for result in query_outcome:
@@ -122,13 +122,13 @@ class DB_CRUD_ops(object):
             cur = db_con.cursor()
             
             res = "[METHOD EXECUTED] get_stock_price\n"
-            query = "SELECT price FROM stocks WHERE symbol = '" + stock_symbol + "'"
+            query = "SELECT price FROM stocks WHERE symbol = (?)"
             res += "[QUERY] " + query + "\n"
-            if ';' in query:
+            if ';' in query and False:
                 res += "[SCRIPT EXECUTION]\n"
                 cur.executescript(query)
             else:
-                cur.execute(query)
+                cur.execute(query, (stock_symbol,))
                 query_outcome = cur.fetchall()
                 for result in query_outcome:
                     res += "[RESULT] " + str(result) + "\n"
@@ -156,10 +156,10 @@ class DB_CRUD_ops(object):
             
             res = "[METHOD EXECUTED] update_stock_price\n"
             # UPDATE stocks SET price = 310.0 WHERE symbol = 'MSFT'
-            query = "UPDATE stocks SET price = '%d' WHERE symbol = '%s'" % (price, stock_symbol)
+            query = "UPDATE stocks SET price = (?) WHERE symbol = (?)"
             res += "[QUERY] " + query + "\n"
             
-            cur.execute(query)
+            cur.execute(query, (price, stock_symbol,))
             db_con.commit()
             query_outcome = cur.fetchall()
             for result in query_outcome:
